@@ -1,10 +1,10 @@
 <?php
 
-namespace Laravel\Homestead\Settings;
+namespace DNT\Devweb\Settings;
 
 use Symfony\Component\Yaml\Yaml;
 
-class YamlSettings extends HomesteadSettings
+class YamlSettings extends Settings
 {
     /**
      * Create an instance from a file.
@@ -18,7 +18,7 @@ class YamlSettings extends HomesteadSettings
     }
 
     /**
-     * Save the homestead settings.
+     * Save the Devweb settings.
      *
      * @param  string  $filename
      * @return void

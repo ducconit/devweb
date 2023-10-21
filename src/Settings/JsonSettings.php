@@ -1,8 +1,8 @@
 <?php
 
-namespace Laravel\Homestead\Settings;
+namespace DNT\Devweb\Settings;
 
-class JsonSettings extends HomesteadSettings
+class JsonSettings extends Settings
 {
     /**
      * Create an instance from a file.
@@ -16,7 +16,7 @@ class JsonSettings extends HomesteadSettings
     }
 
     /**
-     * Save the homestead settings.
+     * Save the Devweb settings.
      *
      * @param  string  $filename
      * @return void

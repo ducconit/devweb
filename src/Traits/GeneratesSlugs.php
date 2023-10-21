@@ -1,6 +1,6 @@
 <?php
 
-namespace Laravel\Homestead\Traits;
+namespace DNT\Devweb\Traits;
 
 trait GeneratesSlugs
 {

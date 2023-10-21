@@ -1,40 +1,38 @@
 #!/usr/bin/env bash
 
-declare -A params=$6       # Create an associative array
-declare -A headers=${9}    # Create an associative array
-declare -A rewrites=${10}  # Create an associative array
+declare -A params=$6      # Create an associative array
+declare -A headers=${9}   # Create an associative array
+declare -A rewrites=${10} # Create an associative array
 paramsTXT=""
 if [ -n "$6" ]; then
-   for element in "${!params[@]}"
-   do
-      paramsTXT="${paramsTXT}
+    for element in "${!params[@]}"; do
+        paramsTXT="${paramsTXT}
       fastcgi_param ${element} ${params[$element]};"
-   done
+    done
 fi
 headersTXT=""
 if [ -n "${9}" ]; then
-   for element in "${!headers[@]}"
-   do
-      headersTXT="${headersTXT}
+    for element in "${!headers[@]}"; do
+        headersTXT="${headersTXT}
       add_header ${element} ${headers[$element]};"
-   done
+    done
 fi
 rewritesTXT=""
 if [ -n "${10}" ]; then
-   for element in "${!rewrites[@]}"
-   do
-      rewritesTXT="${rewritesTXT}
+    for element in "${!rewrites[@]}"; do
+        rewritesTXT="${rewritesTXT}
       location ~ ${element} { if (!-f \$request_filename) { return 301 ${rewrites[$element]}; } }"
-   done
+    done
 fi
 
-if [ "$7" = "true" ]
-then configureXhgui="
+if [ "$7" = "true" ]; then
+    configureXhgui="
 location /xhgui {
         try_files \$uri \$uri/ /xhgui/index.php?\$args;
 }
 "
-else configureXhgui=""
+else
+    configureXhgui=""
 fi
 
 block="server {
@@ -105,9 +103,8 @@ block="server {
 }
 "
 
-echo "$block" > "/etc/nginx/sites-available/$1"
+echo "$block" >"/etc/nginx/sites-available/$1"
 ln -fs "/etc/nginx/sites-available/$1" "/etc/nginx/sites-enabled/$1"
-
 
 # Additional constants to define in wp-config.php
 wpConfigSearchStr="\$table_prefix = 'wp_';"
@@ -131,16 +128,13 @@ if ( ! defined( 'WP_CONTENT_URL' ) ) {\\n\
 define( 'WP_DEBUG', true ); \\n\
 "
 
-
 # If wp-cli is installed, try and update it
-if [ -f /usr/local/bin/wp ]
-then
+if [ -f /usr/local/bin/wp ]; then
     wp cli update --stable --yes
 fi
 
 # If WP is not installed then download it
-if [ -d "$2/wp" ]
-then
+if [ -d "$2/wp" ]; then
     echo "WordPress is already installed."
 else
     sudo -i -u vagrant -- mkdir "$2/wp"
@@ -148,8 +142,8 @@ else
     sudo -i -u vagrant -- cp -R $2/wp/wp-content $2/wp-content
     sudo -i -u vagrant -- cp $2/wp/index.php $2/index.php
     sudo -i -u vagrant -- sed -i "s|/wp-blog-header|/wp/wp-blog-header|g" $2/index.php
-    sudo -i -u vagrant -- echo "path: $2/wp/" > $2/wp-cli.yml
-    sudo -i -u vagrant -- wp config create --path=$2/wp/ --dbname=${1/./_} --dbuser=homestead --dbpass=secret --dbcollate=utf8_general_ci
+    sudo -i -u vagrant -- echo "path: $2/wp/" >$2/wp-cli.yml
+    sudo -i -u vagrant -- wp config create --path=$2/wp/ --dbname=${1/./_} --dbuser=devbox --dbpass=secret --dbcollate=utf8_general_ci
     sudo -i -u vagrant -- mv $2/wp/wp-config.php $2/wp-config.php
     sudo -i -u vagrant -- sed -i 's|'"$wpConfigSearchStr"'|'"$wpConfigReplaceStr"'|g' $2/wp-config.php
     sudo -i -u vagrant -- sed -i "s|define( 'ABSPATH', dirname( __FILE__ ) . '/' );|define( 'ABSPATH', __DIR__ . '/wp/' );|g" $2/wp-config.php

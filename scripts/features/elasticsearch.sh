@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-if [ -f ~/.homestead-features/wsl_user_name ]; then
-    WSL_USER_NAME="$(cat ~/.homestead-features/wsl_user_name)"
-    WSL_USER_GROUP="$(cat ~/.homestead-features/wsl_user_group)"
+if [ -f ~/.features/wsl_user_name ]; then
+    WSL_USER_NAME="$(cat ~/.features/wsl_user_name)"
+    WSL_USER_GROUP="$(cat ~/.features/wsl_user_group)"
 else
     WSL_USER_NAME=vagrant
     WSL_USER_GROUP=vagrant
@@ -10,32 +10,29 @@ fi
 
 export DEBIAN_FRONTEND=noninteractive
 
-if [ -f /home/$WSL_USER_NAME/.homestead-features/elasticsearch ]
-then
+if [ -f /home/$WSL_USER_NAME/.features/elasticsearch ]; then
     echo "Elasticsearch already installed."
     exit 0
 fi
 
-touch /home/$WSL_USER_NAME/.homestead-features/elasticsearch
-chown -Rf $WSL_USER_NAME:$WSL_USER_GROUP /home/$WSL_USER_NAME/.homestead-features
+touch /home/$WSL_USER_NAME/.features/elasticsearch
+chown -Rf $WSL_USER_NAME:$WSL_USER_GROUP /home/$WSL_USER_NAME/.features
 
 # Determine version from config
 
 set -- "$1"
-IFS=".";
+IFS="."
 
 if [ -z "${version}" ]; then
     installVersion="" # by not specifying we'll install latest
-    majorVersion="7" # default to version 7
+    majorVersion="7"  # default to version 7
 else
     installVersion="=$version"
     majorVersion="$(echo $version | head -c 1)"
 fi
 
-
 echo "Elasticsearch installVersion: $installVersion"
 echo "Elasticsearch majorVersion: $majorVersion"
-
 
 # Install Java & Elasticsearch
 
@@ -53,9 +50,9 @@ sudo apt-get -y install elasticsearch"$installVersion"
 
 sudo update-rc.d elasticsearch defaults 95 10
 
-# Update configuration to use 'homestead' as the cluster
+# Update configuration to use 'devweb' as the cluster
 
-sudo sed -i "s/#cluster.name: my-application/cluster.name: homestead/" /etc/elasticsearch/elasticsearch.yml
+sudo sed -i "s/#cluster.name: my-application/cluster.name: devweb/" /etc/elasticsearch/elasticsearch.yml
 
 # Enable Start Elasticsearch
 

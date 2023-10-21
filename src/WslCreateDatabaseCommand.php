@@ -1,10 +1,10 @@
 <?php
 
-namespace Laravel\Homestead;
+namespace DNT\Devweb;
 
-use Laravel\Homestead\Settings\JsonSettings;
-use Laravel\Homestead\Settings\YamlSettings;
-use Laravel\Homestead\Traits\GeneratesSlugs;
+use DNT\Devweb\Settings\JsonSettings;
+use DNT\Devweb\Settings\YamlSettings;
+use DNT\Devweb\Traits\GeneratesSlugs;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -48,8 +48,8 @@ class WslCreateDatabaseCommand extends Command
 
         $this
             ->setName('wsl:create-databases')
-            ->setDescription('Create Databases in WSL from Homestead configuration')
-            ->addOption('json', null, InputOption::VALUE_NONE, 'Determines if the Homestead settings file will be in json format.');
+            ->setDescription('Create Databases in WSL from configuration')
+            ->addOption('json', null, InputOption::VALUE_NONE, 'Determines if the settings file will be in json format.');
     }
 
     /**
@@ -68,10 +68,10 @@ class WslCreateDatabaseCommand extends Command
         foreach ($settings['databases'] as $db) {
             $create_cmd = '';
             $query = "CREATE DATABASE IF NOT EXISTS {$db} DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_unicode_ci";
-            $create_cmd = 'mysql -u homestead -psecret -e "'.$query.'"';
+            $create_cmd = 'mysql -u devbox -psecret -e "' . $query . '"';
             // run command to create the database
             $shell_output = shell_exec($create_cmd);
-            if (! is_null($shell_output)) {
+            if (!is_null($shell_output)) {
                 var_dump($shell_output);
             }
         }
@@ -88,7 +88,7 @@ class WslCreateDatabaseCommand extends Command
     protected function parseSettingsFromFile(string $format, array $options)
     {
         $SettingsClass = ($format === 'json') ? JsonSettings::class : YamlSettings::class;
-        $filename = __DIR__."/../Homestead.{$format}";
+        $filename = __DIR__ . "/../Devweb.{$format}";
 
         return $SettingsClass::fromFile($filename)->toArray();
     }

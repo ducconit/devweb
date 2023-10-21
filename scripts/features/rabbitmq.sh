@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-if [ -f ~/.homestead-features/wsl_user_name ]; then
-    WSL_USER_NAME="$(cat ~/.homestead-features/wsl_user_name)"
-    WSL_USER_GROUP="$(cat ~/.homestead-features/wsl_user_group)"
+if [ -f ~/.features/wsl_user_name ]; then
+    WSL_USER_NAME="$(cat ~/.features/wsl_user_name)"
+    WSL_USER_GROUP="$(cat ~/.features/wsl_user_group)"
 else
     WSL_USER_NAME=vagrant
     WSL_USER_GROUP=vagrant
@@ -10,15 +10,13 @@ fi
 
 export DEBIAN_FRONTEND=noninteractive
 
-if [ -f /home/$WSL_USER_NAME/.homestead-features/rabbitmq ]
-then
+if [ -f /home/$WSL_USER_NAME/.features/rabbitmq ]; then
     echo "rabbitmq already installed."
     exit 0
 fi
 
-touch /home/$WSL_USER_NAME/.homestead-features/rabbitmq
-chown -Rf $WSL_USER_NAME:$WSL_USER_GROUP /home/$WSL_USER_NAME/.homestead-features
-
+touch /home/$WSL_USER_NAME/.features/rabbitmq
+chown -Rf $WSL_USER_NAME:$WSL_USER_GROUP /home/$WSL_USER_NAME/.features
 
 sudo apt-get install curl gnupg debian-keyring debian-archive-keyring apt-transport-https -y
 
@@ -51,20 +49,20 @@ sudo apt-get update -y
 
 ## Install Erlang packages
 sudo apt-get install -y erlang-base \
-                        erlang-asn1 erlang-crypto erlang-eldap erlang-ftp erlang-inets \
-                        erlang-mnesia erlang-os-mon erlang-parsetools erlang-public-key \
-                        erlang-runtime-tools erlang-snmp erlang-ssl \
-                        erlang-syntax-tools erlang-tftp erlang-tools erlang-xmerl
+    erlang-asn1 erlang-crypto erlang-eldap erlang-ftp erlang-inets \
+    erlang-mnesia erlang-os-mon erlang-parsetools erlang-public-key \
+    erlang-runtime-tools erlang-snmp erlang-ssl \
+    erlang-syntax-tools erlang-tftp erlang-tools erlang-xmerl
 
 ## Install rabbitmq-server and its dependencies
 sudo apt-get install rabbitmq-server php-amqp php-bcmath -y --fix-missing
 
 # Enable RabbitMQ HTTP Admin Interface
 sudo rabbitmq-plugins enable rabbitmq_management
-sudo rabbitmqctl add_user homestead secret
-sudo rabbitmqctl set_user_tags homestead administrator
-sudo rabbitmqctl set_permissions -p / homestead ".*" ".*" ".*"
-sudo rabbitmqctl set_topic_permissions -p / homestead ".*" ".*" ".*"
+sudo rabbitmqctl add_user devweb secret
+sudo rabbitmqctl set_user_tags devweb administrator
+sudo rabbitmqctl set_permissions -p / devweb ".*" ".*" ".*"
+sudo rabbitmqctl set_topic_permissions -p / devweb ".*" ".*" ".*"
 
 # Install rabbitmqadmin CLI tool - https://www.rabbitmq.com/management-cli.html
 sudo wget -q http://localhost:15672/cli/rabbitmqadmin -O /usr/local/bin/rabbitmqadmin

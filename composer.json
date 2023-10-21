@@ -1,14 +1,14 @@
 {
-    "name": "laravel/homestead",
-    "description": "A virtual machine for web artisans.",
+    "name": "ducconit/devweb",
+    "description": "Your ideal web development environment.",
     "require": {
-        "php": "^8.0 || <8.3",
+        "php": "^7.4 || ^8.0",
         "symfony/console": "^5.0 || ^6.0",
         "symfony/process": "^5.0 || ^6.0",
         "symfony/yaml": "^5.0 || ^6.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^9.5",
+        "phpunit/phpunit": "^9.5 || ^10.0",
         "dms/phpunit-arraysubset-asserts": "^0.2.1"
     },
     "license": "MIT",
@@ -20,11 +20,15 @@
         {
             "name": "Joe Ferguson",
             "email": "joe@joeferguson.me"
+        },
+        {
+            "name": "DNT",
+            "email": "ducconit@gmail.com"
         }
     ],
     "autoload": {
         "psr-4": {
-            "Laravel\\Homestead\\": "src/"
+            "DNT\\Devweb\\": "src/"
         }
     },
     "autoload-dev": {
@@ -33,6 +37,6 @@
         }
     },
     "bin": [
-        "bin/homestead"
+        "bin/devweb"
     ]
 }

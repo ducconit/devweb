@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-# Remove any Homestead entries from /etc/hosts and prepare for adding new ones.
+# Remove any entries from /etc/hosts and prepare for adding new ones.
 
-sudo sed -i '/#### HOMESTEAD-SITES-BEGIN/,/#### HOMESTEAD-SITES-END/d' /etc/hosts
+sudo sed -i '/#### DEVWEB-SITES-BEGIN/,/#### DEVWEB-SITES-END/d' /etc/hosts
 
-printf "#### HOMESTEAD-SITES-BEGIN\n#### HOMESTEAD-SITES-END\n" | sudo tee -a /etc/hosts > /dev/null
+printf "#### DEVWEB-SITES-BEGIN\n#### DEVWEB-SITES-END\n" | sudo tee -a /etc/hosts >/dev/null

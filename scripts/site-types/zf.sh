@@ -5,7 +5,7 @@
 # - Expressive
 # - zend-mvc
 #
-# Type declaration in Homestead.yaml should be one of:
+# Type declaration in Devweb.yaml should be one of:
 #
 # - apigility
 # - expressive
@@ -13,41 +13,39 @@
 #
 # The first two are aliases for the last.
 
-declare -A params=$6       # Create an associative array
-declare -A headers=${9}    # Create an associative array
-declare -A rewrites=${10}  # Create an associative array
+declare -A params=$6      # Create an associative array
+declare -A headers=${9}   # Create an associative array
+declare -A rewrites=${10} # Create an associative array
 paramsTXT=""
 if [ -n "$6" ]; then
-    for element in "${!params[@]}"
-    do
+    for element in "${!params[@]}"; do
         paramsTXT="${paramsTXT}
         fastcgi_param ${element} ${params[$element]};"
     done
 fi
 headersTXT=""
 if [ -n "${9}" ]; then
-   for element in "${!headers[@]}"
-   do
-      headersTXT="${headersTXT}
+    for element in "${!headers[@]}"; do
+        headersTXT="${headersTXT}
       add_header ${element} ${headers[$element]};"
-   done
+    done
 fi
 rewritesTXT=""
 if [ -n "${10}" ]; then
-   for element in "${!rewrites[@]}"
-   do
-      rewritesTXT="${rewritesTXT}
+    for element in "${!rewrites[@]}"; do
+        rewritesTXT="${rewritesTXT}
       location ~ ${element} { if (!-f \$request_filename) { return 301 ${rewrites[$element]}; } }"
-   done
+    done
 fi
 
-if [ "$7" = "true" ]
-then configureXhgui="
+if [ "$7" = "true" ]; then
+    configureXhgui="
 location /xhgui {
         try_files \$uri \$uri/ /xhgui/index.php?\$args;
 }
 "
-else configureXhgui=""
+else
+    configureXhgui=""
 fi
 
 block="server {
@@ -99,5 +97,5 @@ block="server {
 }
 "
 
-echo "$block" > "/etc/nginx/sites-available/$1"
+echo "$block" >"/etc/nginx/sites-available/$1"
 ln -fs "/etc/nginx/sites-available/$1" "/etc/nginx/sites-enabled/$1"

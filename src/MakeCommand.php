@@ -1,10 +1,10 @@
 <?php
 
-namespace Laravel\Homestead;
+namespace DNT\Devweb;
 
-use Laravel\Homestead\Settings\JsonSettings;
-use Laravel\Homestead\Settings\YamlSettings;
-use Laravel\Homestead\Traits\GeneratesSlugs;
+use DNT\Devweb\Settings\JsonSettings;
+use DNT\Devweb\Settings\YamlSettings;
+use DNT\Devweb\Traits\GeneratesSlugs;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -48,14 +48,14 @@ class MakeCommand extends Command
 
         $this
             ->setName('make')
-            ->setDescription('Install Homestead into the current project')
+            ->setDescription('Install Devweb into the current project')
             ->addOption('name', null, InputOption::VALUE_OPTIONAL, 'The name of the virtual machine.', $this->defaultProjectName)
             ->addOption('hostname', null, InputOption::VALUE_OPTIONAL, 'The hostname of the virtual machine.', $this->defaultProjectName)
             ->addOption('ip', null, InputOption::VALUE_OPTIONAL, 'The IP address of the virtual machine.')
             ->addOption('no-after', null, InputOption::VALUE_NONE, 'Determines if the after.sh file is not created.')
             ->addOption('no-aliases', null, InputOption::VALUE_NONE, 'Determines if the aliases file is not created.')
-            ->addOption('example', null, InputOption::VALUE_NONE, 'Determines if a Homestead example file is created.')
-            ->addOption('json', null, InputOption::VALUE_NONE, 'Determines if the Homestead settings file will be in json format.');
+            ->addOption('example', null, InputOption::VALUE_NONE, 'Determines if a Devweb example file is created.')
+            ->addOption('json', null, InputOption::VALUE_NONE, 'Determines if the Devweb settings file will be in json format.');
     }
 
     /**
@@ -67,21 +67,21 @@ class MakeCommand extends Command
      */
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        if (! $this->vagrantfileExists()) {
+        if (!$this->vagrantfileExists()) {
             $this->createVagrantfile();
         }
 
-        if (! $input->getOption('no-aliases') && ! $this->aliasesFileExists()) {
+        if (!$input->getOption('no-aliases') && !$this->aliasesFileExists()) {
             $this->createAliasesFile();
         }
 
-        if (! $input->getOption('no-after') && ! $this->afterShellScriptExists()) {
+        if (!$input->getOption('no-after') && !$this->afterShellScriptExists()) {
             $this->createAfterShellScript();
         }
 
         $format = $input->getOption('json') ? 'json' : 'yaml';
 
-        if (! $this->settingsFileExists($format)) {
+        if (!$this->settingsFileExists($format)) {
             $this->createSettingsFile($format, [
                 'name' => $input->getOption('name'),
                 'hostname' => $input->getOption('hostname'),
@@ -89,25 +89,25 @@ class MakeCommand extends Command
             ]);
         }
 
-        if ($input->getOption('example') && ! $this->exampleSettingsExists($format)) {
+        if ($input->getOption('example') && !$this->exampleSettingsExists($format)) {
             $this->createExampleSettingsFile($format);
         }
 
         $this->checkForDuplicateConfigs($output);
 
-        $output->writeln('Homestead Installed!');
+        $output->writeln('Devweb Installed!');
 
         return 0;
     }
 
     /**
-     * Determines if Homestead has been installed "per project".
+     * Determines if Devweb has been installed "per project".
      *
      * @return bool
      */
     protected function isPerProjectInstallation()
     {
-        return (bool) preg_match('/vendor\/laravel\/homestead/', __DIR__);
+        return (bool) preg_match('/vendor\/dnt\/devweb/', __DIR__);
     }
 
     /**
@@ -127,7 +127,7 @@ class MakeCommand extends Command
      */
     protected function createVagrantfile()
     {
-        copy(__DIR__.'/../resources/localized/Vagrantfile', "{$this->basePath}/Vagrantfile");
+        copy(__DIR__ . '/../resources/localized/Vagrantfile', "{$this->basePath}/Vagrantfile");
     }
 
     /**
@@ -148,9 +148,9 @@ class MakeCommand extends Command
     protected function createAliasesFile()
     {
         if ($this->isPerProjectInstallation()) {
-            copy(__DIR__.'/../resources/localized/aliases', "{$this->basePath}/aliases");
+            copy(__DIR__ . '/../resources/localized/aliases', "{$this->basePath}/aliases");
         } else {
-            copy(__DIR__.'/../resources/aliases', "{$this->basePath}/aliases");
+            copy(__DIR__ . '/../resources/aliases', "{$this->basePath}/aliases");
         }
     }
 
@@ -171,7 +171,7 @@ class MakeCommand extends Command
      */
     protected function createAfterShellScript()
     {
-        copy(__DIR__.'/../resources/after.sh', "{$this->basePath}/after.sh");
+        copy(__DIR__ . '/../resources/after.sh', "{$this->basePath}/after.sh");
     }
 
     /**
@@ -182,11 +182,11 @@ class MakeCommand extends Command
      */
     protected function settingsFileExists($format)
     {
-        return file_exists("{$this->basePath}/Homestead.{$format}");
+        return file_exists("{$this->basePath}/Devweb.{$format}");
     }
 
     /**
-     * Create the homestead settings file.
+     * Create the settings file.
      *
      * @param  string  $format
      * @param  array  $options
@@ -197,12 +197,12 @@ class MakeCommand extends Command
         $SettingsClass = ($format === 'json') ? JsonSettings::class : YamlSettings::class;
 
         $filename = $this->exampleSettingsExists($format) ?
-            "{$this->basePath}/Homestead.{$format}.example" :
-            __DIR__."/../resources/Homestead.{$format}";
+            "{$this->basePath}/Devweb.{$format}.example" :
+            __DIR__ . "/../resources/Devweb.{$format}";
 
         $settings = $SettingsClass::fromFile($filename);
 
-        if (! $this->exampleSettingsExists($format)) {
+        if (!$this->exampleSettingsExists($format)) {
             $settings->updateName($options['name'])
                 ->updateHostname($options['hostname']);
         }
@@ -210,7 +210,7 @@ class MakeCommand extends Command
         $settings->updateIpAddress($options['ip'])
             ->configureSites($this->projectName, $this->defaultProjectName)
             ->configureSharedFolders($this->basePath, $this->defaultProjectName)
-            ->save("{$this->basePath}/Homestead.{$format}");
+            ->save("{$this->basePath}/Devweb.{$format}");
     }
 
     /**
@@ -221,18 +221,18 @@ class MakeCommand extends Command
      */
     protected function exampleSettingsExists($format)
     {
-        return file_exists("{$this->basePath}/Homestead.{$format}.example");
+        return file_exists("{$this->basePath}/Devweb.{$format}.example");
     }
 
     /**
-     * Create the homestead settings example file.
+     * Create the settings example file.
      *
      * @param  string  $format
      * @return void
      */
     protected function createExampleSettingsFile($format)
     {
-        copy("{$this->basePath}/Homestead.{$format}", "{$this->basePath}/Homestead.{$format}.example");
+        copy("{$this->basePath}/Devweb.{$format}", "{$this->basePath}/Devweb.{$format}.example");
     }
 
     /**
@@ -245,12 +245,12 @@ class MakeCommand extends Command
      */
     protected function checkForDuplicateConfigs(OutputInterface $output)
     {
-        if (file_exists("{$this->basePath}/Homestead.yaml") && file_exists("{$this->basePath}/Homestead.json")) {
+        if (file_exists("{$this->basePath}/Devweb.yaml") && file_exists("{$this->basePath}/Devweb.json")) {
             $output->writeln(
-                '<error>WARNING! You have Homestead.yaml AND Homestead.json configuration files</error>'
+                '<error>WARNING! You have Devweb.yaml AND Devweb.json configuration files</error>'
             );
             $output->writeln(
-                '<error>WARNING! Homestead will not use Homestead.json until you rename or delete the Homestead.yaml</error>'
+                '<error>WARNING! Devweb will not use Devweb.json until you rename or delete the Devweb.yaml</error>'
             );
         }
     }

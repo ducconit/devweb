@@ -6,7 +6,7 @@
     </include>
   </coverage>
   <testsuites>
-    <testsuite name="Laravel Homestead tests">
+    <testsuite name="Devweb tests">
       <directory>./tests</directory>
     </testsuite>
   </testsuites>

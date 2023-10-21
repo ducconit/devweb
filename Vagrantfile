@@ -7,13 +7,13 @@ require 'yaml'
 VAGRANTFILE_API_VERSION ||= "2"
 confDir = $confDir ||= File.expand_path(File.dirname(__FILE__))
 
-homesteadYamlPath = confDir + "/Homestead.yaml"
-homesteadJsonPath = confDir + "/Homestead.json"
+configYamlPath = confDir + "/Devweb.yaml"
+configJsonPath = confDir + "/Devweb.json"
 afterScriptPath = confDir + "/after.sh"
 customizationScriptPath = confDir + "/user-customizations.sh"
 aliasesPath = confDir + "/aliases"
 
-require File.expand_path(File.dirname(__FILE__) + '/scripts/homestead.rb')
+require File.expand_path(File.dirname(__FILE__) + '/scripts/app.rb')
 
 Vagrant.require_version '>= 2.2.4'
 
@@ -25,15 +25,15 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         end
     end
 
-    if File.exist? homesteadYamlPath then
-        settings = YAML::load(File.read(homesteadYamlPath))
-    elsif File.exist? homesteadJsonPath then
-        settings = JSON::parse(File.read(homesteadJsonPath))
+    if File.exist? configYamlPath then
+        settings = YAML::load(File.read(configYamlPath))
+    elsif File.exist? configJsonPath then
+        settings = JSON::parse(File.read(configJsonPath))
     else
-        abort "Homestead settings file not found in #{confDir}"
+        abort "Devweb settings file not found in #{confDir}"
     end
 
-    Homestead.configure(config, settings)
+    Devweb.configure(config, settings)
 
     if File.exist? afterScriptPath then
         config.vm.provision "Run after.sh", type: "shell", path: afterScriptPath, privileged: false, keep_color: true

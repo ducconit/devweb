@@ -1,10 +1,10 @@
 <?php
 
-namespace Laravel\Homestead;
+namespace DNT\Devweb;
 
-use Laravel\Homestead\Settings\JsonSettings;
-use Laravel\Homestead\Settings\YamlSettings;
-use Laravel\Homestead\Traits\GeneratesSlugs;
+use DNT\Devweb\Settings\JsonSettings;
+use DNT\Devweb\Settings\YamlSettings;
+use DNT\Devweb\Traits\GeneratesSlugs;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -48,8 +48,8 @@ class WslCreateSiteCommand extends Command
 
         $this
             ->setName('wsl:create-sites')
-            ->setDescription('Create Sites in WSL from Homestead configuration')
-            ->addOption('json', null, InputOption::VALUE_NONE, 'Determines if the Homestead settings file will be in json format.');
+            ->setDescription('Create Sites in WSL from Devweb configuration')
+            ->addOption('json', null, InputOption::VALUE_NONE, 'Determines if the Devweb settings file will be in json format.');
     }
 
     /**
@@ -63,7 +63,7 @@ class WslCreateSiteCommand extends Command
     {
         // Remove any existing nginx sites
         $shell_output = shell_exec('sudo rm -rf /etc/nginx/sites-available/*');
-        if (! is_null($shell_output)) {
+        if (!is_null($shell_output)) {
             var_dump($shell_output);
         }
 
@@ -107,20 +107,20 @@ class WslCreateSiteCommand extends Command
 
             // run command to create the site
             $shell_output = shell_exec($create_cmd);
-            if (! is_null($shell_output)) {
+            if (!is_null($shell_output)) {
                 var_dump($shell_output);
             }
 
             // run command to create the site's SSL certificates
             $cert_cmd = "sudo bash {$this->basePath}/scripts/create-certificate.sh {$site['map']}";
             $shell_output = shell_exec($cert_cmd);
-            if (! is_null($shell_output)) {
+            if (!is_null($shell_output)) {
                 var_dump($shell_output);
             }
 
             // Restart nginx
             $shell_output = shell_exec('sudo service nginx restart');
-            if (! is_null($shell_output)) {
+            if (!is_null($shell_output)) {
                 var_dump($shell_output);
             }
         }
@@ -137,7 +137,7 @@ class WslCreateSiteCommand extends Command
     protected function parseSettingsFromFile(string $format, array $options)
     {
         $SettingsClass = ($format === 'json') ? JsonSettings::class : YamlSettings::class;
-        $filename = __DIR__."/../Homestead.{$format}";
+        $filename = __DIR__ . "/../Devweb.{$format}";
 
         return $SettingsClass::fromFile($filename)->toArray();
     }

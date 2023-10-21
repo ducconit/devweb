@@ -3,10 +3,10 @@
 set -f
 PATH_SSL="/etc/ssl/certs"
 
-# Path to the custom Homestead $(hostname) Root CA certificate.
-PATH_ROOT_CNF="${PATH_SSL}/ca.homestead.$(hostname).cnf"
-PATH_ROOT_CRT="${PATH_SSL}/ca.homestead.$(hostname).crt"
-PATH_ROOT_KEY="${PATH_SSL}/ca.homestead.$(hostname).key"
+# Path to the custom Devweb $(hostname) Root CA certificate.
+PATH_ROOT_CNF="${PATH_SSL}/ca.devweb.$(hostname).cnf"
+PATH_ROOT_CRT="${PATH_SSL}/ca.devweb.$(hostname).crt"
+PATH_ROOT_KEY="${PATH_SSL}/ca.devweb.$(hostname).key"
 
 # Path to the custom site certificate.
 PATH_CNF="${PATH_SSL}/${1}.cnf"
@@ -16,9 +16,9 @@ PATH_KEY="${PATH_SSL}/${1}.key"
 
 BASE_CNF="
     [ ca ]
-    default_ca = ca_homestead_$(hostname)
+    default_ca = ca_devweb_$(hostname)
 
-    [ ca_homestead_$(hostname) ]
+    [ ca_devweb_$(hostname) ]
     dir           = $PATH_SSL
     certs         = $PATH_SSL
     new_certs_dir = $PATH_SSL
@@ -68,17 +68,16 @@ BASE_CNF="
 "
 
 # Only generate the root certificate when there isn't one already there.
-if [ ! -f $PATH_ROOT_CNF ] || [ ! -f $PATH_ROOT_KEY ] || [ ! -f $PATH_ROOT_CRT ]
-then
+if [ ! -f $PATH_ROOT_CNF ] || [ ! -f $PATH_ROOT_KEY ] || [ ! -f $PATH_ROOT_CRT ]; then
     # Generate an OpenSSL configuration file specifically for this certificate.
     cnf="
         ${BASE_CNF}
         [ req_distinguished_name ]
         O  = Vagrant
         C  = UN
-        CN = Homestead $(hostname) Root CA
+        CN = Devweb $(hostname) Root CA
     "
-    echo "$cnf" > $PATH_ROOT_CNF
+    echo "$cnf" >$PATH_ROOT_CNF
 
     # Finally, generate the private key and certificate.
     openssl genrsa -out "$PATH_ROOT_KEY" 4096 2>/dev/null
@@ -87,14 +86,13 @@ then
         -x509 -new -extensions v3_ca -days 3650 -sha256 \
         -out "$PATH_ROOT_CRT" 2>/dev/null
 
-        # Symlink ca to local certificate storage and run update command
-        ln --force --symbolic $PATH_ROOT_CRT /usr/local/share/ca-certificates/
-        update-ca-certificates
+    # Symlink ca to local certificate storage and run update command
+    ln --force --symbolic $PATH_ROOT_CRT /usr/local/share/ca-certificates/
+    update-ca-certificates
 fi
 
 # Only generate a certificate if there isn't one already there.
-if [ ! -f $PATH_CNF ] || [ ! -f $PATH_KEY ] || [ ! -f $PATH_CRT ]
-then
+if [ ! -f $PATH_CNF ] || [ ! -f $PATH_KEY ] || [ ! -f $PATH_CRT ]; then
     # Uncomment the global 'copy_extentions' OpenSSL option to ensure the SANs are copied into the certificate.
     sed -i '/copy_extensions\ =\ copy/s/^#\ //g' /etc/ssl/openssl.cnf
 
@@ -110,9 +108,9 @@ then
         DNS.1 = $1
         DNS.2 = *.$1
     "
-    echo "$cnf" > $PATH_CNF
+    echo "$cnf" >$PATH_CNF
 
-    # Finally, generate the private key and certificate signed with the Homestead $(hostname) Root CA.
+    # Finally, generate the private key and certificate signed with the Devweb $(hostname) Root CA.
     openssl genrsa -out "$PATH_KEY" 2048 2>/dev/null
     openssl req -config "$PATH_CNF" \
         -key "$PATH_KEY" \

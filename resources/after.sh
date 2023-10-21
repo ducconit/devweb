@@ -1,16 +1,11 @@
 #!/bin/sh
 
-# If you would like to do some extra provisioning you may
-# add any commands you wish to this file and they will
-# be run after the Homestead machine is provisioned.
+# Nếu bạn muốn thêm bất cứ thứ gì hay làm gì ngay sau khi Devweb đã sẵn sàng thì viết vào đây.
 #
-# If you have user-specific configurations you would like
-# to apply, you may also create user-customizations.sh,
-# which will be run after this script.
+# Nếu bạn có cấu hình dành riêng cho người dùng mà bạn muốn áp dụng, bạn cũng có thể tạo user-customizations.sh,
+# nó sẽ được chạy sau tập lệnh này.
 
-
-# If you're not quite ready for the latest Node.js version,
-# uncomment these lines to roll back to a previous version
+# Nếu bạn không muốn phiên bản node 18.x. Vậy thì bạn hãy bỏ comment ngay sau đây:
 
 # Remove current Node.js version:
 #sudo apt-get -y purge nodejs
@@ -21,3 +16,5 @@
 # More info: https://github.com/nodesource/distributions/blob/master/README.md#debinstall
 #curl -sL https://deb.nodesource.com/setup_13.x | sudo -E bash -
 #sudo apt-get install -y nodejs
+
+# Hoặc xem thêm tại https://github.com/nodesource/distributions

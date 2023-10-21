@@ -1,49 +1,42 @@
-<p align="center"><img src="/art/logo.svg"></p>
+<p align="center"><h1 style="text-align:center;">DEVWEB ENVIRONMENT</h1></p>
 
 <p align="center">
-    <a href="https://github.com/laravel/homestead/actions">
-        <img src="https://github.com/laravel/homestead/workflows/tests/badge.svg" alt="Build Status">
+    <a href="https://github.com/ducconit/devweb/actions">
+        <img src="https://github.com/ducconit/devweb/workflows/tests/badge.svg" alt="Build Status">
     </a>
-    <a href="https://packagist.org/packages/laravel/homestead">
-        <img src="https://img.shields.io/packagist/dt/laravel/homestead" alt="Total Downloads">
+    <a href="https://packagist.org/packages/ducconit/devweb">
+        <img src="https://img.shields.io/packagist/dt/ducconit/devweb" alt="Total Downloads">
     </a>
-    <a href="https://packagist.org/packages/laravel/homestead">
-        <img src="https://img.shields.io/packagist/v/laravel/homestead" alt="Latest Stable Version">
+    <a href="https://packagist.org/packages/ducconit/devweb">
+        <img src="https://img.shields.io/packagist/v/ducconit/devweb" alt="Latest Stable Version">
     </a>
-    <a href="https://packagist.org/packages/laravel/homestead">
-        <img src="https://img.shields.io/packagist/l/laravel/homestead" alt="License">
+    <a href="https://packagist.org/packages/ducconit/devweb">
+        <img src="https://img.shields.io/packagist/l/ducconit/devweb" alt="License">
     </a>
 </p>
 
-## Introduction
+## Giới thiệu
 
-Laravel Homestead is an official, pre-packaged Vagrant box that provides you a wonderful development environment without requiring you to install PHP, a web server, and any other server software on your local machine. No more worrying about messing up your operating system! Vagrant boxes are completely disposable. If something goes wrong, you can destroy and re-create the box in minutes!
+> Devweb là một dự án thay thế cho [Laravel Homestead](https://github.com/laravel/homestead). Mục đích tôi clone lại là muốn tự tạo một môi trường làm việc hiệu quả cho bản thân tôi. Tuy nhiên, nếu muốn bạn cũng có thể đóng góp cho repo này hoặc cho tôi một sao nếu thấy nó hữu ích.
 
-Homestead runs on any Windows, Mac, or Linux system, and includes the Nginx web server, PHP 8.2, MySQL, Postgres, Redis, Memcached, Node, and all of the other goodies you need to develop amazing Laravel applications.
+## Thư viện, tools
 
-Official documentation [is located here](https://laravel.com/docs/homestead).
+#### Tích hợp sẵn
 
-#### Components
+-   Tools: Ngrok, Ohmyzsh, Supervisor
+-   Cache: Redis, Memcached
+-   Database: Mysql, Postgresql, Sqlite
+-   Webserver: Nginx
+-   Node: npm, yarn, bower, gulp-cli, grunt-cli
+-   Virtualization: Docker, Docker compose
 
-Homestead is made up of 2 different projects. The first is this repo which is the *Homestead application* itself. The application is a wrapper around Vagrant which is an API consumer of a virtualization hypervisor, or provider such as Virtualbox, Hyper-V, VMware, Or Parallels. The second part of Homestead is *Settler*, which is essentially JSON & Bash scripts to turn a minimalistic Ubuntu OS into what we call *Homestead base box*. Homestead and Settler (AKA *Homestead Base / Base Box*) combined give you the Homestead development environment.
+#### Khác
 
-> When you run `vagrant up` for the first time Vagrant will download the large base box from Vagrant cloud. The base box is the output from Settler. The base box will be stored at `~/.vagrant.d/` and copied to the folder you ran vagrant up command from in a hidden folder named `.vagrant`. This is what allows vagrant to create a VM and destroy it quickly and without having to download the large base box again.
-
-##### Current versions
-| Ubuntu LTS | Settler Version | Homestead Version | Branch      | Status
-| -----------|-----------------|-------------------| ----------- | -----------
-| 20.04      | 13.x            | 14.x              | `main`      | Development/Unstable
-| 20.04      | 13.x            | 14.x              | `release`   | Stable
-
-## Developing Homestead
-
-To keep any in-development changes separate from other Homestead installations, create a new project and install
-Homestead from composer, forcing it to use a git checkout.
-
-```
-$ mkdir homestead && \
-    cd homestead && \
-    composer require --prefer-source laravel/homestead:dev-main
-```
-
-After it's complete, `vendor/laravel/homestead` will be a git checkout and can be used normally.
+-   Monitor/Profiler: Blackfire, Chronograf, Grafaba
+-   Database(or related): Casandra, Couchdb, Eventstore, Flyway, Influxdb, Mongodb, Neo4j, Timescaledb
+-   Program Language: Golang, Crystal
+-   Elastic/Analytic/Statistic: Elasticsearch, Logstash, Meilisearch, R-base, Solr
+-   Job/Task: Gearman
+-   Tools/Extension: Heroku cli, PHP Trader
+-   Storage: Minio
+-   Queue: RabbitMQ

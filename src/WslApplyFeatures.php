@@ -1,10 +1,10 @@
 <?php
 
-namespace Laravel\Homestead;
+namespace DNT\Devweb;
 
-use Laravel\Homestead\Settings\JsonSettings;
-use Laravel\Homestead\Settings\YamlSettings;
-use Laravel\Homestead\Traits\GeneratesSlugs;
+use DNT\Devweb\Settings\JsonSettings;
+use DNT\Devweb\Settings\YamlSettings;
+use DNT\Devweb\Traits\GeneratesSlugs;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -52,12 +52,12 @@ class WslApplyFeatures extends Command
         $this->basePath = getcwd();
         $this->projectName = basename($this->basePath);
         $this->defaultProjectName = $this->slug($this->projectName);
-        $this->featuresPath = getcwd().'/scripts/features';
+        $this->featuresPath = getcwd() . '/scripts/features';
 
         $this
             ->setName('wsl:apply-features')
-            ->setDescription('Configure features in WSL from Homestead configuration')
-            ->addOption('json', null, InputOption::VALUE_NONE, 'Determines if the Homestead settings file will be in json format.');
+            ->setDescription('Configure features in WSL from configuration')
+            ->addOption('json', null, InputOption::VALUE_NONE, 'Determines if the settings file will be in json format.');
     }
 
     /**
@@ -79,7 +79,7 @@ class WslApplyFeatures extends Command
             $feature_variables = $feature[$feature_name];
 
             if ($feature_variables !== false) {
-                $feature_path = "{$this->featuresPath}/{$feature_name}.sh > ~/.homestead-features/{$feature_name}.log";
+                $feature_path = "{$this->featuresPath}/{$feature_name}.sh > ~/.features/{$feature_name}.log";
                 // Prepare the feature variables if provided.
                 if (is_array($feature_variables)) {
                     $variables = join(' ', $feature_variables);
@@ -88,7 +88,7 @@ class WslApplyFeatures extends Command
                     $feature_cmd = "sudo -E bash {$feature_path}";
                 }
                 shell_exec($feature_cmd);
-                $output->writeln("Command output can be found via: sudo cat ~/.homestead-features/{$feature_name}.log");
+                $output->writeln("Command output can be found via: sudo cat ~/.features/{$feature_name}.log");
             }
         }
 
@@ -105,7 +105,7 @@ class WslApplyFeatures extends Command
     protected function parseSettingsFromFile(string $format, array $options)
     {
         $SettingsClass = ($format === 'json') ? JsonSettings::class : YamlSettings::class;
-        $filename = __DIR__."/../Homestead.{$format}";
+        $filename = __DIR__ . "/../Devweb.{$format}";
 
         return $SettingsClass::fromFile($filename)->toArray();
     }

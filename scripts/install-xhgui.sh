@@ -2,21 +2,20 @@
 
 # Check If xhgui Has Been Installed
 
-if [ -f /home/vagrant/.homestead-features/xhgui ]
-then
+if [ -f /home/vagrant/.features/xhgui ]; then
     echo "xhgui already installed."
     exit 0
 fi
 
-touch /home/vagrant/.homestead-features/xhgui
-chown -Rf vagrant:vagrant /home/vagrant/.homestead-features
+touch /home/vagrant/.features/xhgui
+chown -Rf vagrant:vagrant /home/vagrant/.features
 
 apt install -y php-tideways
 phpenmod -v ALL tideways
 
 git clone https://github.com/perftools/xhgui.git /opt/xhgui
 
-cat <<'EOT' > /opt/xhgui/webroot/.htaccess
+cat <<'EOT' >/opt/xhgui/webroot/.htaccess
 <IfModule mod_rewrite.c>
 	RewriteEngine On
 	RewriteCond %{REQUEST_FILENAME} !-f
@@ -24,7 +23,7 @@ cat <<'EOT' > /opt/xhgui/webroot/.htaccess
 </IfModule>
 EOT
 
-cat <<'EOT' > /opt/xhgui/config/config.php
+cat <<'EOT' >/opt/xhgui/config/config.php
 <?php
 /**
  * Configuration for XHGui.
@@ -54,7 +53,7 @@ return array(
     //
     'db.host' => 'mongodb://127.0.0.1:27017',
     'db.db' => 'xhprof',
-    'db.options' => array('username' => 'homestead', 'password' => 'secret'),
+    'db.options' => array('username' => 'devbox', 'password' => 'secret'),
 
     // Whether to instrument a user request.
     //
@@ -143,9 +142,8 @@ db.results.ensureIndex( { "meta.request_ts" : 1 }, { expireAfterSeconds : 432000
 cd /opt/xhgui
 php install.php
 
-for version in 5.6 7.0 7.1 7.2 7.3 7.4
-do
-  cat << 'EOT' > /etc/php/$version/mods-available/xhgui.ini
+for version in 5.6 7.0 7.1 7.2 7.3 7.4; do
+    cat <<'EOT' >/etc/php/$version/mods-available/xhgui.ini
 ; Include xhgui's header for performance profiling.
 auto_prepend_file="/opt/xhgui/external/header.php"
 EOT

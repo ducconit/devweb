@@ -1,8 +1,8 @@
 <?php
 
-namespace Laravel\Homestead\Settings;
+namespace DNT\Devweb\Settings;
 
-abstract class HomesteadSettings
+abstract class Settings
 {
     /**
      * Settings attributes.
@@ -30,7 +30,7 @@ abstract class HomesteadSettings
     abstract public static function fromFile($filename);
 
     /**
-     * Save the homestead settings.
+     * Save the devbox settings.
      *
      * @param  string  $filename
      * @return void
@@ -38,7 +38,7 @@ abstract class HomesteadSettings
     abstract public function save($filename);
 
     /**
-     * Update the homestead settings.
+     * Update the devbox settings.
      *
      * @param  array  $attributes
      * @return static
@@ -46,7 +46,7 @@ abstract class HomesteadSettings
     public function update($attributes)
     {
         $this->attributes = array_merge($this->attributes, array_filter($attributes, function ($attribute) {
-            return ! is_null($attribute);
+            return !is_null($attribute);
         }));
 
         return $this;
@@ -107,7 +107,7 @@ abstract class HomesteadSettings
             ],
         ];
 
-        if (isset($this->attributes['sites']) && ! empty($this->attributes['sites'])) {
+        if (isset($this->attributes['sites']) && !empty($this->attributes['sites'])) {
             foreach ($this->attributes['sites'] as $index => $user_site) {
                 if (isset($user_site['map'])) {
                     $sites[$index]['map'] = $user_site['map'];
@@ -156,10 +156,10 @@ abstract class HomesteadSettings
             ],
         ];
 
-        if (isset($this->attributes['folders']) && ! empty($this->attributes['folders'])) {
+        if (isset($this->attributes['folders']) && !empty($this->attributes['folders'])) {
             foreach ($this->attributes['folders'] as $index => $user_folder) {
                 if (isset($user_folder['map']) && empty($folders[$index]['map'])) {
-                    $folders[$index]['map'] = dirname($projectPath).'/'.basename($user_folder['map']);
+                    $folders[$index]['map'] = dirname($projectPath) . '/' . basename($user_folder['map']);
                 }
 
                 if (isset($user_folder['to'])) {
@@ -182,7 +182,7 @@ abstract class HomesteadSettings
     }
 
     /**
-     * Convert the homestead settings to an array.
+     * Convert the settings to an array.
      *
      * @return array
      */

@@ -1,5 +1,5 @@
 ---
-ip: "192.168.56.56"
+ip: "192.168.9.12"
 memory: 2048
 cpus: 2
 provider: virtualbox
@@ -11,20 +11,18 @@ keys:
 
 folders:
     - map: ~/code
-      to: /home/vagrant/code
+      to: /var/www/code
 
 sites:
-    - map: homestead.test
-      to: /home/vagrant/code/public
+    - map: devweb.test
+      to: /var/www/laravel/public
 
 databases:
-    - homestead
+    - devweb
 
 features:
     - mysql: true
-    - mariadb: false
     - postgresql: false
-    - ohmyzsh: false
     - webdriver: false
 
 services:

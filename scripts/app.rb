@@ -1,5 +1,5 @@
-# Main Homestead Class
-class Homestead
+# Main Devweb Class
+class Devweb
   def self.configure(config, settings)
     # Set The VM Provider
     ENV['VAGRANT_DEFAULT_PROVIDER'] = settings['provider'] ||= 'virtualbox'
@@ -16,16 +16,16 @@ class Homestead
     end
 
     # Configure The Box
-    config.vm.define settings['name'] ||= 'homestead'
-    config.vm.box = settings['box'] ||= 'laravel/homestead'
+    config.vm.define settings['name'] ||= 'devweb'
+    config.vm.box = settings['box'] ||= 'ducconit/devweb'
     unless settings.has_key?('SpeakFriendAndEnter')
-      config.vm.box_version = settings['version'] ||= '>= 13.0.0, < 14.0.0'
+      config.vm.box_version = settings['version'] ||= '>=1.0.0'
     end
-    config.vm.hostname = settings['hostname'] ||= 'homestead'
+    config.vm.hostname = settings['hostname'] ||= 'devweb'
 
     # Configure A Private Network IP
     if settings['ip'] != 'autonetwork'
-      config.vm.network :private_network, ip: settings['ip'] ||= '192.168.56.56'
+      config.vm.network :private_network, ip: settings['ip'] ||= '192.168.9.12'
     else
       config.vm.network :private_network, ip: '0.0.0.0', auto_network: true
     end
@@ -39,7 +39,7 @@ class Homestead
 
     # Configure A Few VirtualBox Settings
     config.vm.provider 'virtualbox' do |vb|
-      vb.name = settings['name'] ||= 'homestead'
+      vb.name = settings['name'] ||= 'devweb'
       vb.customize ['modifyvm', :id, '--memory', settings['memory'] ||= '2048']
       vb.customize ['modifyvm', :id, '--cpus', settings['cpus'] ||= '1']
       vb.customize ['modifyvm', :id, '--natdnsproxy1', 'on']
@@ -69,7 +69,7 @@ class Homestead
     # Configure A Few VMware Settings
     ['vmware_fusion', 'vmware_workstation', 'vmware_desktop'].each do |vmware|
       config.vm.provider vmware do |v|
-        v.vmx['displayName'] = settings['name'] ||= 'homestead'
+        v.vmx['displayName'] = settings['name'] ||= 'devweb'
         v.vmx['memsize'] = settings['memory'] ||= 2048
         v.vmx['numvcpus'] = settings['cpus'] ||= 1
         v.vmx['guestOS'] = 'ubuntu-64'
@@ -81,7 +81,7 @@ class Homestead
 
     # Configure A Few Hyper-V Settings
     config.vm.provider "hyperv" do |h, override|
-      h.vmname = settings['name'] ||= 'homestead'
+      h.vmname = settings['name'] ||= 'devweb'
       h.cpus = settings['cpus'] ||= 1
       h.memory = settings['memory'] ||= 2048
       h.linked_clone = true
@@ -102,7 +102,7 @@ class Homestead
 
     # Configure A Few Parallels Settings
     config.vm.provider 'parallels' do |v|
-      v.name = settings['name'] ||= 'homestead'
+      v.name = settings['name'] ||= 'devweb'
       v.update_guest_tools = settings['update_parallels_tools'] ||= false
       v.memory = settings['memory'] ||= 2048
       v.cpus = settings['cpus'] ||= 1
@@ -169,7 +169,7 @@ class Homestead
     # Copy The SSH Private Keys To The Box
     if settings.include? 'keys'
       if settings['keys'].to_s.length.zero?
-        puts 'Check your Homestead.yaml file, you have no private key(s) specified.'
+        puts 'Check your Devweb.yaml file, you have no private key(s) specified.'
         exit
       end
       settings['keys'].each do |key|
@@ -180,7 +180,7 @@ class Homestead
             s.args = [File.read(File.expand_path(key)), key.split('/').last]
           end
         else
-          puts 'Check your Homestead.yaml (or Homestead.json) file, the path to your private key does not exist.'
+          puts 'Check your Devweb.yaml (or Devweb.json) file, the path to your private key does not exist.'
           exit
         end
       end
@@ -232,7 +232,7 @@ class Homestead
           end
         else
           config.vm.provision 'shell' do |s|
-            s.inline = ">&2 echo \"Unable to mount one of your folders. Please check your folders in Homestead.yaml\""
+            s.inline = ">&2 echo \"Unable to mount one of your folders. Please check your folders in Devweb.yaml\""
           end
         end
       end
@@ -247,13 +247,13 @@ class Homestead
     if settings.has_key?('php') && settings['php']
       config.vm.provision "Changing PHP CLI Version", type: "shell" do |s|
         s.name = 'Changing PHP CLI Version'
-        s.inline = "sudo update-alternatives --set php /usr/bin/php#{settings['php']}; sudo update-alternatives --set php-config /usr/bin/php-config#{settings['php']}; sudo update-alternatives --set phpize /usr/bin/phpize#{settings['php']}"
+        s.inline = "sudo update-alternatives --set php /usr/bin/php#{settings['php']};"
       end
     end
 
     # Creates folder for opt-in features lockfiles
-    config.vm.provision "mk_features", type: "shell", inline: "mkdir -p /home/vagrant/.homestead-features"
-    config.vm.provision "own_features", type: "shell", inline: "chown -Rf vagrant:vagrant /home/vagrant/.homestead-features"
+    config.vm.provision "mk_features", type: "shell", inline: "mkdir -p /home/vagrant/.features"
+    config.vm.provision "own_features", type: "shell", inline: "chown -Rf vagrant:vagrant /home/vagrant/.features"
 
     # Install opt-in features
     if settings.has_key?('features')
@@ -327,7 +327,7 @@ class Homestead
       s.path = script_dir + '/clear-nginx.sh'
     end
 
-    # Clear any Homestead sites and insert markers in /etc/hosts
+    # Clear any sites and insert markers in /etc/hosts
     config.vm.provision 'shell' do |s|
       s.path = script_dir + '/hosts-reset.sh'
     end
@@ -516,31 +516,6 @@ class Homestead
     if settings.has_key?('variables')
       settings['variables'].each do |var|
         config.vm.provision 'shell' do |s|
-          s.inline = "echo \"\nenv[$1] = '$2'\" >> /etc/php/5.6/fpm/pool.d/www.conf"
-          s.args = [var['key'], var['value']]
-        end
-
-        config.vm.provision 'shell' do |s|
-          s.inline = "echo \"\nenv[$1] = '$2'\" >> /etc/php/7.0/fpm/pool.d/www.conf"
-          s.args = [var['key'], var['value']]
-        end
-
-        config.vm.provision 'shell' do |s|
-          s.inline = "echo \"\nenv[$1] = '$2'\" >> /etc/php/7.1/fpm/pool.d/www.conf"
-          s.args = [var['key'], var['value']]
-        end
-
-        config.vm.provision 'shell' do |s|
-          s.inline = "echo \"\nenv[$1] = '$2'\" >> /etc/php/7.2/fpm/pool.d/www.conf"
-          s.args = [var['key'], var['value']]
-        end
-
-        config.vm.provision 'shell' do |s|
-          s.inline = "echo \"\nenv[$1] = '$2'\" >> /etc/php/7.3/fpm/pool.d/www.conf"
-          s.args = [var['key'], var['value']]
-        end
-
-        config.vm.provision 'shell' do |s|
           s.inline = "echo \"\nenv[$1] = '$2'\" >> /etc/php/7.4/fpm/pool.d/www.conf"
           s.args = [var['key'], var['value']]
         end
@@ -561,13 +536,13 @@ class Homestead
         end
 
         config.vm.provision 'shell' do |s|
-          s.inline = "echo \"\n# Set Homestead Environment Variable\nexport $1=$2\" >> /home/vagrant/.profile"
+          s.inline = "echo \"\n# Set Devweb Environment Variable\nexport $1=$2\" >> /home/vagrant/.profile"
           s.args = [var['key'], var['value']]
         end
       end
 
       config.vm.provision 'shell' do |s|
-        s.inline = 'service php5.6-fpm restart;service php7.0-fpm restart;service  php7.1-fpm restart; service php7.2-fpm restart; service php7.3-fpm restart; service php7.4-fpm restart; service php8.0-fpm restart; service php8.1-fpm restart; service php8.2-fpm restart;'
+        s.inline = 'service php7.4-fpm restart; service php8.0-fpm restart; service php8.1-fpm restart; service php8.2-fpm restart;'
       end
     end
 
@@ -697,15 +672,15 @@ class Homestead
       settings['databases'].each do |database|
         # Backup MySQL/MariaDB
         if (enabled_databases.include? 'mysql') || (enabled_databases.include? 'mariadb')
-          Homestead.backup_mysql(database, "#{dir_prefix}/mysql_backup", config)
+          Devweb.backup_mysql(database, "#{dir_prefix}/mysql_backup", config)
         end
         # Backup PostgreSQL
         if enabled_databases.include? 'postgresql'
-          Homestead.backup_postgres(database, "#{dir_prefix}/postgres_backup", config)
+          Devweb.backup_postgres(database, "#{dir_prefix}/postgres_backup", config)
         end
         # Backup MongoDB
         if enabled_databases.include? 'mongodb'
-          Homestead.backup_mongodb(database, "#{dir_prefix}/mongodb_backup", config)
+          Devweb.backup_mongodb(database, "#{dir_prefix}/mongodb_backup", config)
         end
       end
     end
@@ -733,7 +708,7 @@ class Homestead
     now = Time.now.strftime("%Y%m%d%H%M")
     config.trigger.before :destroy do |trigger|
       trigger.warn = "Backing up postgres database #{database}..."
-      trigger.run_remote = {inline: "mkdir -p #{dir}/#{now} && echo localhost:5432:#{database}:homestead:secret > ~/.pgpass && chmod 600 ~/.pgpass && pg_dump -U homestead -h localhost #{database} > #{dir}/#{now}/#{database}-#{now}.sql"}
+      trigger.run_remote = {inline: "mkdir -p #{dir}/#{now} && echo localhost:5432:#{database}:devbox:secret > ~/.pgpass && chmod 600 ~/.pgpass && pg_dump -U devbox -h localhost #{database} > #{dir}/#{now}/#{database}-#{now}.sql"}
     end
   end
 

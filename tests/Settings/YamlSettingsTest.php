@@ -3,7 +3,7 @@
 namespace Tests\Settings;
 
 use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
-use Laravel\Homestead\Settings\YamlSettings;
+use DNT\Devweb\Settings\YamlSettings;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Yaml\Yaml;
 use Tests\Traits\GeneratesTestDirectory;
@@ -15,10 +15,10 @@ class YamlSettingsTest extends TestCase
     /** @test */
     public function it_can_be_created_from_a_filename()
     {
-        $settings = YamlSettings::fromFile(__DIR__.'/../../resources/Homestead.yaml');
+        $settings = YamlSettings::fromFile(__DIR__ . '/../../resources/Devweb.yaml');
 
         self::assertArraySubset([
-            'ip' => '192.168.56.56',
+            'ip' => '192.168.9.12',
             'memory' => '2048',
             'cpus' => '2',
         ], $settings->toArray());
@@ -28,17 +28,17 @@ class YamlSettingsTest extends TestCase
     public function it_can_be_saved_to_a_file()
     {
         $settings = new YamlSettings([
-            'ip' => '192.168.56.56',
+            'ip' => '192.168.9.12',
             'memory' => '2048',
             'cpus' => 1,
         ]);
-        $filename = self::$testDirectory.DIRECTORY_SEPARATOR.'Homestead.yaml';
+        $filename = self::$testDirectory . DIRECTORY_SEPARATOR . 'Devweb.yaml';
 
         $settings->save($filename);
 
         $this->assertFileExists($filename);
         self::assertArraySubset([
-            'ip' => '192.168.56.56',
+            'ip' => '192.168.9.12',
             'memory' => '2048',
             'cpus' => '1',
         ], Yaml::parse(file_get_contents($filename)));
@@ -48,7 +48,7 @@ class YamlSettingsTest extends TestCase
     public function it_can_update_its_attributes()
     {
         $settings = new YamlSettings([
-            'ip' => '192.168.56.56',
+            'ip' => '192.168.9.12',
             'memory' => '2048',
             'cpus' => 1,
         ]);
@@ -70,7 +70,7 @@ class YamlSettingsTest extends TestCase
     public function it_updates_only_not_null_attributes()
     {
         $settings = new YamlSettings([
-            'ip' => '192.168.56.56',
+            'ip' => '192.168.9.12',
             'memory' => '2048',
             'cpus' => 1,
         ]);
@@ -82,7 +82,7 @@ class YamlSettingsTest extends TestCase
         ]);
 
         self::assertArraySubset([
-            'ip' => '192.168.56.56',
+            'ip' => '192.168.9.12',
             'memory' => '2048',
             'cpus' => '1',
         ], $settings->toArray());
@@ -127,7 +127,7 @@ class YamlSettingsTest extends TestCase
         $settings = new YamlSettings([
             'sites' => [
                 [
-                    'map' => 'homestead.test',
+                    'map' => 'devweb.test',
                     'to' => '/home/vagrant/Laravel/public',
                     'type' => 'laravel',
                     'schedule' => true,
@@ -140,7 +140,7 @@ class YamlSettingsTest extends TestCase
 
         $attributes = $settings->toArray();
         $this->assertEquals([
-            'map' => 'homestead.test',
+            'map' => 'devweb.test',
             'to' => '/home/vagrant/Laravel/public',
             'type' => 'laravel',
             'schedule' => true,

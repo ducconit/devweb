@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-if [ -f ~/.homestead-features/wsl_user_name ]; then
-    WSL_USER_NAME="$(cat ~/.homestead-features/wsl_user_name)"
-    WSL_USER_GROUP="$(cat ~/.homestead-features/wsl_user_group)"
+if [ -f ~/.features/wsl_user_name ]; then
+    WSL_USER_NAME="$(cat ~/.features/wsl_user_name)"
+    WSL_USER_GROUP="$(cat ~/.features/wsl_user_group)"
 else
     WSL_USER_NAME=vagrant
     WSL_USER_GROUP=vagrant
@@ -10,14 +10,13 @@ fi
 
 export DEBIAN_FRONTEND=noninteractive
 
-if [ -f /home/$WSL_USER_NAME/.homestead-features/neo4j ]
-then
+if [ -f /home/$WSL_USER_NAME/.features/neo4j ]; then
     echo "neo4j already installed."
     exit 0
 fi
 
-touch /home/$WSL_USER_NAME/.homestead-features/neo4j
-chown -Rf $WSL_USER_NAME:$WSL_USER_GROUP /home/$WSL_USER_NAME/.homestead-features
+touch /home/$WSL_USER_NAME/.features/neo4j
+chown -Rf $WSL_USER_NAME:$WSL_USER_GROUP /home/$WSL_USER_NAME/.features
 
 wget -O - https://debian.neo4j.org/neotechnology.gpg.key | sudo apt-key add -
 echo 'deb https://debian.neo4j.org/repo stable/' | sudo tee -a /etc/apt/sources.list.d/neo4j.list
@@ -37,7 +36,7 @@ systemctl enable neo4j
 systemctl start neo4j
 
 # Poll Neo4j
-end="$((SECONDS+60))"
+end="$((SECONDS + 60))"
 while true; do
     nc -w 2 localhost 7687 && break
     [[ "${SECONDS}" -ge "${end}" ]] && exit 1
@@ -46,7 +45,7 @@ done
 
 # Add new Neo4j user
 cypher-shell -u neo4j -p neo4j "CALL dbms.changePassword('secret');"
-cypher-shell -u neo4j -p secret "CALL dbms.security.createUser('homestead', 'secret', false);"
+cypher-shell -u neo4j -p secret "CALL dbms.security.createUser('devbox', 'secret', false);"
 
 # Delete default Neo4j user
-cypher-shell -u homestead -p secret "CALL dbms.security.deleteUser('neo4j');"
+cypher-shell -u devbox -p secret "CALL dbms.security.deleteUser('neo4j');"
