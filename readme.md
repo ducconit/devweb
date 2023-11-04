@@ -14,6 +14,8 @@
 
 ## Giới thiệu
 
+> Repo này đã được chuyển sang https://github.com/VinaCoder/vagrant-workspace và tiếp tục phát triển
+
 > Devweb là một dự án thay thế cho [Laravel Homestead](https://github.com/laravel/homestead). Mục đích tôi clone lại là muốn tự tạo một môi trường làm việc hiệu quả cho bản thân tôi. Tuy nhiên, nếu muốn bạn cũng có thể đóng góp cho repo này hoặc cho tôi một sao nếu thấy nó hữu ích.
 
 ## Thư viện, tools
